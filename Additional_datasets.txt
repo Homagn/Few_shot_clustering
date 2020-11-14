@@ -1,0 +1,13 @@
+Can use this link to down few Shot occupancy dataset collected by our team:
+(Dataset used in the paper -> https://arxiv.org/abs/2008.05654)
+(To get access send me an email to -> homagnisaha@gmail.com)
+
+https://drive.google.com/file/d/1rz52Vp_O-jP1eFsi0pXHnTZMl4_pKo-T/view?usp=sharing
+
+Unzip instructions:
+-Unzip the downloaded data
+-Extract the Himax folder
+-There are several data for several room and different lighting and occupancy conditions 
+-Challenge is to learn occupied/unoccupied from these low rez images using fewest supervised examples
+-Arrange the extracted dataset in instances/ as instructed in the README regarding data organization
+
