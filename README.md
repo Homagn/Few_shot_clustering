@@ -30,7 +30,8 @@ pip install dill
 conda install scikit-learn
 
 pip install matplotlib
- (version requirements must match for the code to run !)
+
+*Dataset directory structure*
 =====================================
 
 1. Directories need to be created :
