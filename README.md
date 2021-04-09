@@ -21,8 +21,11 @@ python main.py
 *Dependencies:*
 ================================
 pytorch
+
 opencv
+
 numpy
+
 
 *Dataset directory structure*
 =====================================
