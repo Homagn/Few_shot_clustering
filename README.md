@@ -14,6 +14,7 @@ See Additional_datasets.txt
 *To run*
 ================================
 python main.py 
+
 (all the parameters of the code present in the top few lines of main.py, explained with comments)
 
 
@@ -29,22 +30,35 @@ numpy
 Directories need to be created :
 
 data/labeled/0
+
 	    /1
+	    
 ...
+
 ...
+
 	    /n
+	    
 (the few labeled images that you have)
+
 (depending upon number of classes present in the few shot learning problem)
 
 data/unlabeled/ 
+
 (dump all the unlabeled images you want to cluster here)
 
 data/validation/0
+
 ...
+
 	       /n
+	       
 (same structure as data/labaled, this folder images used by the algorithm to track convergence progress if you dont have enough annotations for this folder, just comment out the validate() function in main.py)
 
 data/model_pred/0
+
 ...
+
 	       /n
+	       
 (same structure as data/labeled, here the model will store the clustering results in respective folders as the EM algorithm progresses)
