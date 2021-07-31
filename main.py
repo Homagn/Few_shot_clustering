@@ -15,11 +15,11 @@ import sys
 labels = [0,1] #number of distinct labels in the labeled dataset
 # required for training (for this case need two folders in labeled '0' 
 # containing n representative images and '1' containing n representative images)
-num_actual_labels = 5 #the 'n' representative images value of n
+num_actual_labels = 20 #the 'n' representative images value of n
 # required for validating (for this case need two folders in testing '0' 
 # containing v representative images and '1' containing v representative images)
 num_validation_labels = 28 #the 'v' representative images value of v
-num_sampled_ul = 50 #A parameter of the algorithm - number of unlabeled images paired with labeled images each time
+num_sampled_ul = 100 #A parameter of the algorithm - number of unlabeled images paired with labeled images each time
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 model = Siamese((32,32),1) #image size (32,32), 1 channel
@@ -201,7 +201,8 @@ def input_pairs_validation(): #used for validation
 
 
 
-def E_step(model,label_pairs, validating):
+def E_step(model,label_pairs, mode):
+    #mode can be 0,1 or 2 , 0 means training, 1 means validating and 2 means inference
 
     def percent_threshold_values(array,percent=50):
         p = percent/100.0
@@ -224,9 +225,12 @@ def E_step(model,label_pairs, validating):
     nsul = num_sampled_ul
     nal = num_actual_labels
 
-    if validating:
+    if mode==1:
         nsul = num_validation_labels*2
         #nal = num_validation_labels
+        nal = num_actual_labels
+    if mode==2:
+        nsul = 1 #inference on 1 image
         nal = num_actual_labels
 
     label_score = {i:np.zeros(len(labels),) for i in range(nsul)}
@@ -247,6 +251,7 @@ def E_step(model,label_pairs, validating):
         similarity_table = similarity_estimates.reshape(nal,nsul)
         #print("similarity table shape ",similarity_table.shape)
         a = similarity_table
+        #print(a)
         #see this technique 
         #(get the median in each row of the table and threshold each row values to either 0 or 1 based or lesser or greater than row median)
         #https://stackoverflow.com/questions/53106728/how-to-threshold-based-on-the-average-value-of-a-row
@@ -413,13 +418,7 @@ def train_targets(model,label_pairs, targets, warmstart):
 
 
 def train():
-    '''
-    #initial testing
-    names = get_names('data/labeled')
-    print("got file names ",names)
-    a = read_image(names[0],(256,128), True, True)
-    test_image(a)
-    '''
+    val_exist = input('Does a validation folder exist ?(y/n) ')
 
 
     
@@ -439,20 +438,20 @@ def train():
     
     for c in range(num_clustering_steps):
         label_pairs, _ = input_pairs()
-        label_scores = E_step(model,label_pairs,False)
+        label_scores = E_step(model,label_pairs,0)
 
         targets = M_step(model,label_scores,False,label_pairs = label_pairs)
         train_targets(model,label_pairs,targets, False)
         torch.save(model.state_dict(), 'model.pth')
 
-        if c%10==0:
+        if c%10==0 and val_exist=='y':
             print("\nTesting on validation images ")
             validate()
 
 
 def validate():
     label_pairs, targets = input_pairs_validation()
-    label_scores = E_step(model,label_pairs,True)
+    label_scores = E_step(model,label_pairs,1)
     targets_estimate = M_step(model,label_scores,True)
     #print("target ",targets[0])
     #print("targets_estimate ",targets_estimate[0])
@@ -467,6 +466,9 @@ def validate():
         print("label ",l," -> ",label_wise_match[l])
     #sys.exit(0)
         
+
+
+
 
 
 
